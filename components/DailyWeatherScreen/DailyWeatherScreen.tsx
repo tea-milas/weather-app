@@ -44,12 +44,20 @@ const DailyWeatherScreen = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.day}>
+            <View style={styles.container_day}>
                 <Text style={styles.date}>{dayOfTheWeek}, {daysOfTheMonth}</Text>
                 <Text style={styles.time}>{hours}:{minutes}</Text>
             </View>
-            <View style={styles.weather}>
-                <Text>London 19°</Text>
+            <View style={styles.container_weather}>
+                <View style={styles.weather_forecast}>
+                    <Text style={styles.sign}>☀️</Text>
+                    <Text style={styles.status}>Sunny</Text>
+                </View>
+                
+                <View style={styles.weather_info}>
+                    <Text style={styles.temperature}> 19°</Text>
+                    <Text style={styles.location}>London</Text>
+                </View>
             </View>
         </View>
     )
@@ -66,27 +74,61 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
-    day: {
+    container_day: {
         marginTop: 0,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
+        
     },
     date: {
       display:'flex',
       alignItems: 'center',
       justifyContent: 'flex-start',
       marginBottom: 20,
+      fontSize: 20,
+      color: 'white',
     },
     time: {
       fontSize: 50,
       fontWeight: 'bold',
+      color: 'white',
     },
-    weather: {
-        width: '90%',
-        height: '20%',
+    container_weather: {
         marginTop: '10%',
-        backgroundColor: '#969B35'
+        borderRadius: 10,
+        width: '90%',
+        height: '40%',
+        backgroundColor: '#969B35',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+    },
+    weather_forecast: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    sign: {
+        fontSize: 70,
+    },
+    status: {
+        color: 'white',
+    },
+    weather_info: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    location: {
+        color: 'white',
+    },
+    temperature: {
+        fontSize: 60,
+        color: 'white',
     }
   });
