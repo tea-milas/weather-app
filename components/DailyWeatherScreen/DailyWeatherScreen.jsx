@@ -1,14 +1,30 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import useWeather from '../../hooks/useWeather';
 
 const DailyWeatherScreen = () => {
-    const [dayOfTheWeek, setDayOfTheWeek] = useState("");
+    const [currentLocalWeather] = useWeather();
+
+    const [dayOfTheWeek, setDayOfTheWeek] = useState('');
     const [daysOfTheMonth, setDayOfTheMonth] = useState(0);
     const [hours, setHours] = useState(0);
-    const [minutes, setMinutes] = useState(0);
+    const [minutes, setMinutes] = useState('');
 
     const getTime = () => {
+        const d = new Date();
+        setHours(d.getHours());
+
+        if (d.getMinutes() < 10) {
+            setMinutes(`0${d.getMinutes()}`);
+        } else {
+            setMinutes(`${d.getMinutes()}`)
+        }
+        
+        setTimeout(getTime, 30000);
+    }
+
+    const getDate = () => {
         const d = new Date();
         switch (d.getDay()) {
             case 0:
@@ -34,13 +50,13 @@ const DailyWeatherScreen = () => {
         }
 
         setDayOfTheMonth(d.getDate());
-        setHours(d.getHours());
-        setMinutes(d.getMinutes());
     }
 
     useEffect(() => {
         getTime();
-    }, [])
+        getDate();
+    }, [30000])
+    
 
     return (
         <View style={styles.container}>
@@ -50,13 +66,13 @@ const DailyWeatherScreen = () => {
             </View>
             <View style={styles.container_weather}>
                 <View style={styles.weather_forecast}>
-                    <Text style={styles.sign}>☀️</Text>
-                    <Text style={styles.status}>Sunny</Text>
+                    <Text style={styles.sign}>{currentLocalWeather.current.condition.icon}</Text>
+                    <Text style={styles.status}>{currentLocalWeather.current.condition.text}</Text>
                 </View>
                 
                 <View style={styles.weather_info}>
-                    <Text style={styles.temperature}> 19°</Text>
-                    <Text style={styles.location}>London</Text>
+                    <Text style={styles.temperature}>{currentLocalWeather.current.temp_c}°</Text>
+                    <Text style={styles.location}>{currentLocalWeather.location.name}</Text>
                 </View>
             </View>
         </View>
