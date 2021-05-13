@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import useLocation from './useLocation';
+import { ILocation } from './useLocation';
 
-interface IlocalWeatherLocation {
+interface ILocalWeatherLocation {
     name: string,
     region: string,
     country: string,
     };
-interface IlocalWather {
+interface ILocalWeather {
     temp_c: number, 
     temp_f: number,
     wind_mph: number,
@@ -26,32 +26,34 @@ interface IlocalWather {
     uv: number,
     gust_mph: number,
     gust_kph: number,
-    condition: Icondition,
+    condition: ICondition,
   };
   
-  interface Icondition {
+  interface ICondition {
     text: string,
     icon: string,
   }
 
-  interface Ilondon {
-      location: IlocalWeatherLocation,
-      current: IlocalWather,
+  interface ILondon {
+      location: ILocalWeatherLocation,
+      current: ILocalWeather,
   }
 
-const useWeather = () => {
-    const [currentLocalWeather, setCurrentLocalWeather] = useState<IlocalWather>();
-    const [localWeatherLocation,setLocalWeatherLocation] = useState<IlocalWeatherLocation>();
-    const [London, setLondon] = useState<Ilondon>();
-    const location = useLocation();
+const useWeather = (location?: ILocation) => {
+    const [currentLocalWeather, setCurrentLocalWeather] = useState<ILocalWeather>();
+    const [localWeatherLocation,setLocalWeatherLocation] = useState<ILocalWeatherLocation>();
+    const [London, setLondon] = useState<ILondon>();
 
-    
+    const APIKEY = ;
     
     const getCurrentLocalWeather = () => {
+        location ?
         fetch(`http://api.weatherapi.com/v1/current.json?key=${APIKEY}&q=${location.coords.latitude},${location.coords.longitude}`)
         .then(response => response.json())
         .then(response => { setCurrentLocalWeather(response.current); 
                             setLocalWeatherLocation(response.location)})
+                            :
+        console.log('LOCATION IS UNDEFINED!')
     }
 
     const getLondonWeather = () => {
@@ -62,10 +64,11 @@ const useWeather = () => {
 
     useEffect(() => {
         getLondonWeather();
+        getCurrentLocalWeather();
     }, [])
     
     
-    return [currentLocalWeather,getCurrentLocalWeather, London]
+    return {currentLocalWeather, localWeatherLocation, London}
 }
 
 export default useWeather
