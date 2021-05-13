@@ -1,78 +1,33 @@
 import * as React from 'react';
 import {useState, useEffect} from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import useWeather from '../../hooks/useWeather';
+import useDateTime from '../../hooks/useDateTime'
+import useLocation from '../../hooks/useLocation'
+import useWeather from '../../hooks/useWeather'
 
 const DailyWeatherScreen = () => {
-    const [currentLocalWeather] = useWeather();
-
-    const [dayOfTheWeek, setDayOfTheWeek] = useState('');
-    const [daysOfTheMonth, setDayOfTheMonth] = useState(0);
-    const [hours, setHours] = useState(0);
-    const [minutes, setMinutes] = useState('');
-
-    const getTime = () => {
-        const d = new Date();
-        setHours(d.getHours());
-
-        if (d.getMinutes() < 10) {
-            setMinutes(`0${d.getMinutes()}`);
-        } else {
-            setMinutes(`${d.getMinutes()}`)
-        }
-        
-        setTimeout(getTime, 30000);
-    }
-
-    const getDate = () => {
-        const d = new Date();
-        switch (d.getDay()) {
-            case 0:
-                setDayOfTheWeek("Sunday");
-              break;
-            case 1:
-                setDayOfTheWeek("Monday");
-              break;
-            case 2:
-                setDayOfTheWeek("Tuesday");
-              break;
-            case 3:
-                setDayOfTheWeek("Wednesday");
-              break;
-            case 4:
-                setDayOfTheWeek("Thursday");
-              break;
-            case 5:
-                setDayOfTheWeek("Friday");
-              break;
-            case 6:
-                setDayOfTheWeek("Saturday");
-        }
-
-        setDayOfTheMonth(d.getDate());
-    }
-
-    useEffect(() => {
-        getTime();
-        getDate();
-    }, [30000])
-    
+    const [dayOfTheMonth, dayOfTheWeek, hours, minutes] = useDateTime();
+    const [currentLocalWeather, userLocation] = useLocation();
+    const London = useWeather();
+    console.log('weatheeeerrr', currentLocalWeather)
+    console.log('location', userLocation);
+    console.log('london', London);
 
     return (
         <View style={styles.container}>
             <View style={styles.container_day}>
-                <Text style={styles.date}>{dayOfTheWeek}, {daysOfTheMonth}</Text>
+                <Text style={styles.date}>{dayOfTheWeek}, {dayOfTheMonth}</Text>
                 <Text style={styles.time}>{hours}:{minutes}</Text>
             </View>
             <View style={styles.container_weather}>
                 <View style={styles.weather_forecast}>
-                    <Text style={styles.sign}>{currentLocalWeather.current.condition.icon}</Text>
-                    <Text style={styles.status}>{currentLocalWeather.current.condition.text}</Text>
+                    <Text style={styles.sign}>SUN</Text>
+                    <Text style={styles.status}>SUNNY</Text>
                 </View>
                 
                 <View style={styles.weather_info}>
-                    <Text style={styles.temperature}>{currentLocalWeather.current.temp_c}°</Text>
-                    <Text style={styles.location}>{currentLocalWeather.location.name}</Text>
+                    <Text style={styles.temperature}>16°</Text>
+                    <Text style={styles.location}>{userLocation ? userLocation.name : London}</Text>
                 </View>
             </View>
         </View>

@@ -1,23 +1,43 @@
 import React, {useState, useEffect} from 'react';
 import * as Location from 'expo-location';
 
-const useLocation = () => {
-  const [location, setLocation] = useState<Location.LocationObject>();
+export interface Ilocation {
+  coords: Icoords
+}
 
-  useEffect( () => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
+interface Icoords {
+  latitude: number;
+  longitude: number;
+}
+
+
+const useLocation = () => {
+  const [location, setLocation] = useState<Ilocation>();
+ 
+
+  const getLocation = async() => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.error('Permission to access location was denied');
         return;
       }
-      const fetechedLocation = await Location.getCurrentPositionAsync({});
+      const lastKnownLocation = await Location.getLastKnownPositionAsync();
+      if (lastKnownLocation) {
+        setLocation(lastKnownLocation);
+      } else {
+        const currentLocation = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Low});
+        setLocation(currentLocation);
+      }
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      // console.log("wyyy ", fetechedLocation)
-  
-      setLocation(fetechedLocation);
-    })();
-  }, [])
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   return [location];
 }
