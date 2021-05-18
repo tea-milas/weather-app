@@ -16,7 +16,7 @@ const useDateTime = () => {
             setMinutes(`${d.getMinutes()}`)
         }
         
-        setTimeout(getTime, 30000);
+        setTimeout(getTime, 5000);
     }
 
     const getDate = () => {

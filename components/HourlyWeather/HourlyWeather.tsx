@@ -1,12 +1,12 @@
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View, Image, ActivityIndicator, FlatList } from 'react-native';
-import useWeather, {IForecastday} from '../../hooks/useWeather'
+import useWeather from '../../hooks/useWeather'
 import useLocation from '../../hooks/useLocation'
 import { ScrollView } from 'react-native-gesture-handler';
 import useDateTime from '../../hooks/useDateTime';
 
 const WeeklyWeather = () => {
-    const [hours] = useDateTime();
+    const  [dayOfTheMonth, dayOfTheWeek, hours, minutes] = useDateTime();
     const {isLoading, location} = useLocation();
     const {forecast, London} = useWeather(location);
     
@@ -15,20 +15,39 @@ const WeeklyWeather = () => {
         return time;
     }
 
+    const timeAsNumber = (time : string) => {
+       if (time.charAt(0) === '0') {
+        return time.charAt(1)
+       } else {
+        return time.substr(0,2)
+       }
+    }
+
     return (
         <View style={styles.container}>
             {isLoading || !forecast || !London ? <ActivityIndicator/> : 
                         (<ScrollView horizontal={true} >
-                            {forecast ? forecast.forecastday[0].hour.map(h => (<View style={styles.container__weekly_weather__day} key={h.time}>
-                                <Text style={styles.time}>{timeOfTheDay(h.time)}</Text>
-                                <Image source={{uri: 'https:'+ h.condition.icon}} style={{ width: 40, height: 40 }} />
-                                <Text style={styles.text}>{h.temp_c}°</Text>
-                            </View>) ) :
-                                London.forecast.forecastday[0].hour.map(h => (<View style={styles.container__weekly_weather__day} key={h.time}>
+                            {forecast ? forecast.forecastday[0].hour.map(h => { if (timeAsNumber(timeOfTheDay(h.time)) > hours) {
+                                return (<View style={styles.container__weekly_weather__day} key={h.time}>
+                                    <Text style={styles.time}>{timeOfTheDay(h.time)}</Text>
+                                    <Image source={{uri: 'https:'+ h.condition.icon}} style={{ width: 40, height: 40 }} />
+                                    <Text style={styles.text}>{h.temp_c}°</Text>
+                                </View>)
+                            } else if (timeAsNumber(timeOfTheDay(h.time)) == hours){
+                                return (<View style={styles.container__weekly_weather__day} key={h.time}>
+                                    <Text style={styles.time}>NOW</Text>
+                                    <Image source={{uri: 'https:'+ h.condition.icon}} style={{ width: 40, height: 40 }} />
+                                    <Text style={styles.text}>{h.temp_c}°</Text>
+                                </View>)
+                            }} ) 
+                            :
+                                London.forecast.forecastday[0].hour.map(h => { timeAsNumber(timeOfTheDay(h.time)) >= hours.toString() && 
+                                    (<View style={styles.container__weekly_weather__day} key={h.time}>
                                         <Text style={styles.time}>{timeOfTheDay(h.time)}</Text>
-                                        <Image source={{uri: 'https:'+ h.condition.icon}} style={{ width: 60, height: 60 }} />
+                                        <Image source={{uri: 'https:'+ h.condition.icon}} style={{ width: 40, height: 40 }} />
                                         <Text style={styles.text}>{h.temp_c}°</Text>
-                                    </View>) )
+                                    </View>)
+                                })
                             }
                         </ScrollView>
                         )
