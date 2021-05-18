@@ -38,7 +38,7 @@ const useLocation = () => {
           console.log(error);
         }
       })()
-    }, 10000 );
+    }, 5000 );
   
     return () => clearInterval(interval);
     
